@@ -4,10 +4,10 @@ import br.com.dicasdeumdev.api.domain.User;
 import br.com.dicasdeumdev.api.domain.dto.UserDTO;
 import br.com.dicasdeumdev.api.repositories.UserRepository;
 import br.com.dicasdeumdev.api.services.UserService;
-import br.com.dicasdeumdev.api.services.exceptions.DataIntegratyViolationException;
 import br.com.dicasdeumdev.api.services.exceptions.ObjectNotFoudException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import br.com.dicasdeumdev.api.services.exceptions.DataIntegratyViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -38,9 +38,15 @@ public class UserServiceImpl implements UserService {
         return repository.save(mapper.map(obj, User.class));
     }
 
+    @Override
+    public User update(UserDTO obj) {
+        findByEmail(obj);
+        return repository.save(mapper.map(obj, User.class));
+    }
+
     private void findByEmail(UserDTO obj){
         Optional<User> user = repository.findByEmail(obj.getEmail());
-        if(user.isPresent()){
+        if(user.isPresent() && !user.get().getId().equals(obj.getId())){
             throw new DataIntegratyViolationException("E-mail já cadastrado no sistema");
         }
     }
