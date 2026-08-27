@@ -3,6 +3,7 @@ package br.com.dicasdeumdev.api.services.impl;
 import br.com.dicasdeumdev.api.domain.User;
 import br.com.dicasdeumdev.api.domain.dto.UserDTO;
 import br.com.dicasdeumdev.api.repositories.UserRepository;
+import br.com.dicasdeumdev.api.services.exceptions.ObjectNotFoudException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -25,6 +26,7 @@ class UserServiceImplTest {
     public static final String NAME = "rodolfo";
     public static final String EMAIL = "rodolfo@gmail.com";
     public static final String PASSWORD = "321";
+
     @InjectMocks
     private  UserServiceImpl service;
 
@@ -60,7 +62,20 @@ class UserServiceImplTest {
     }
 
     @Test
-    void findAll() {
+    void whenFindByIdThenReturnAnObjectNotFoundException(){
+        when(repository.findById(anyInt())).thenThrow(new ObjectNotFoudException("Objeto não encontrado"));
+
+        try{
+            service.findById(ID);
+        }catch (Exception ex){
+            assertEquals(ObjectNotFoudException.class, ex.getClass());
+            assertEquals("Objeto não encontrado", ex.getMessage());
+        }
+    }
+
+    @Test
+    void whenFindAllThenReturnAnListOfUsers() {
+
     }
 
     @Test
