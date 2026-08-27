@@ -19,7 +19,7 @@ import java.util.Optional;
 import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @SpringBootTest
 class UserServiceImplTest {
@@ -146,8 +146,26 @@ class UserServiceImplTest {
             assertEquals(E_MAIL_JA_CADASTRADO_NO_SISTEMA, ex.getMessage());
         }
     }
+
     @Test
-    void delete() {
+    void deleteWithSuccess() {
+        when(repository.findById(any())).thenReturn(optionalUser);
+        doNothing().when(repository).deleteById(anyInt());
+        service.delete(ID);
+        verify(repository, times(1)).deleteById(anyInt());
+    }
+
+    @Test
+    void whenDeleteThenReturnObjectNotFoundException() {
+        when(repository.findById(any())).thenThrow(new ObjectNotFoudException(OBJETO_NAO_ENCONTRADO));
+        try{
+            optionalUser.get().setId(10);
+            service.delete(userDTO.getId());
+        }catch (Exception ex){
+            assertEquals(ObjectNotFoudException.class, ex.getClass());
+            assertEquals(OBJETO_NAO_ENCONTRADO, ex.getMessage());
+        }
+
     }
 
     private void startUser(){
