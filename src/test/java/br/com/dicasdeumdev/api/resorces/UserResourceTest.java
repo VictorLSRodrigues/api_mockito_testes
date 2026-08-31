@@ -101,7 +101,7 @@ class UserResourceTest {
     }
 
     @Test
-    void update() {
+    void whenUpdateThenReturnSuccess() {
     }
 
     @Test
